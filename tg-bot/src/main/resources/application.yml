@@ -1,0 +1,19 @@
+server:
+  port: ${port:8080}
+
+spring:
+  application:
+    name: memedbbot
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/memeDBBot
+      auto-index-creation: true
+
+bot:
+  telegramToken:
+  auto-delete-messages:
+    fixed-rate: 60_000
+
+logging:
+  file:
+    name: ${log.dir:/tmp}/memedbbot.main.log
