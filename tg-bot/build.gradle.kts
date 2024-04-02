@@ -47,3 +47,8 @@ dependencies {
 kotlin {
     jvmToolchain(17)
 }
+
+tasks.withType<Jar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+// фикс бага с дублированием какой-то зависимости, фикс нагуглил, правьте если это не нужно
