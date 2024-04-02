@@ -3,12 +3,8 @@ package com.vitekkor.memeDB.config
 import com.justai.jaicf.BotEngine
 import com.justai.jaicf.activator.regex.RegexActivator
 import com.justai.jaicf.api.BotApi
-import com.justai.jaicf.api.BotRequest
-import com.justai.jaicf.api.BotResponse
 import com.justai.jaicf.channel.telegram.TelegramChannel
-import com.justai.jaicf.context.BotContext
-import com.justai.jaicf.context.RequestContext
-import com.justai.jaicf.context.manager.BotContextManager
+import com.justai.jaicf.context.manager.mongo.MongoBotContextManager
 import com.justai.jaicf.logging.Slf4jConversationLogger
 import com.vitekkor.memeDB.config.properties.BotConfigurationProperties
 import com.vitekkor.memeDB.scenario.MainScenario
@@ -25,9 +21,13 @@ import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.mongodb.MongoDatabaseFactory
 
 @Configuration
-class MemeDBConfiguration {
+class MemeDBConfiguration(
+    private val mongoDatabaseFactory: MongoDatabaseFactory,
+    private val botConfigurationProperties: BotConfigurationProperties
+) {
 
     @Bean(name = ["telegramClient"])
     fun telegramClient(): HttpClient {
@@ -74,16 +74,17 @@ class MemeDBConfiguration {
     @Bean
     fun botApi(
         mainScenario: MainScenario,
-        contextManager: BotContextManager,
     ) = BotEngine(
         scenario = mainScenario,
-        defaultContextManager = contextManager,
+        defaultContextManager = mongoDatabaseFactory.createContextManager(
+            botConfigurationProperties.mongoCollection
+        ),
         activators = arrayOf(RegexActivator),
         conversationLoggers = arrayOf(Slf4jConversationLogger())
     )
 
     @Bean
-    fun teleramChannel(botApi: BotApi, botConfigurationProperties: BotConfigurationProperties, ktorClient: HttpClient) =
+    fun teleramChannel(botApi: BotApi, ktorClient: HttpClient) =
         TelegramChannel(
             botApi = botApi,
             telegramBotToken = botConfigurationProperties.telegramToken,
@@ -92,19 +93,8 @@ class MemeDBConfiguration {
             run()
         }
 
-    @Bean
-    fun contextManager(): BotContextManager = object : BotContextManager {
-        override fun loadContext(request: BotRequest, requestContext: RequestContext): BotContext {
-            return BotContext(request.clientId)
-        }
-
-        override fun saveContext(
-            botContext: BotContext,
-            request: BotRequest?,
-            response: BotResponse?,
-            requestContext: RequestContext
-        ) {
-            // skip saving
-        }
+    companion object {
+        private fun MongoDatabaseFactory.createContextManager(collection: String) =
+            MongoBotContextManager(mongoDatabase.getCollection(collection))
     }
 }
