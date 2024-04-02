@@ -1,0 +1,194 @@
+openapi: 3.0.3
+info:
+  title: Sale Lot Service API
+  description: API for managing sale lots for stocks
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+
+tags:
+  - name: SaleLot
+    description: Operations with Lots for Sell
+
+paths:
+  /sell/lot:
+    post:
+      tags:
+        - SaleLot
+      summary: Create a new sale lot for stocks
+      operationId: createSaleLot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaleLotDto'
+      responses:
+        '201':
+          description: Sale lot created successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        '400':
+          description: Bad Request
+    get:
+      tags:
+        - SaleLot
+      summary: Get information about all sale lots
+      operationId: getAllSaleLots
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SaleLotDto'
+        '404':
+          description: Lots not found
+
+  /sell/lot/{lotId}:
+    get:
+      tags:
+        - SaleLot
+      summary: Get information about a specific sale lot by ID
+      operationId: getSaleLotById
+      parameters:
+        - in: path
+          name: lotId
+          required: true
+          schema:
+            type: string
+          description: Lot ID
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaleLotDto'
+        '404':
+          description: Lot not found
+    post:
+      tags:
+        - SaleLot
+      summary: Update Number Of stocks in lot
+      operationId: updateNUmberOfStocksSaleLotById
+      parameters:
+        - in: path
+          name: lotId
+          required: true
+          schema:
+            type: string
+          description: Lot ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: integer
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaleLotDto'
+        '404':
+          description: Lot not found
+    delete:
+      tags:
+        - SaleLot
+      summary: Delete information about a specific sale lot by ID
+      operationId: deleteSaleLotById
+      parameters:
+        - in: path
+          name: lotId
+          required: true
+          schema:
+            type: string
+          description: Lot ID
+      responses:
+        '200':
+          description: Successful request
+        '404':
+          description: Lot not found
+
+  /sell/lot/user/{userId}:
+    get:
+      tags:
+        - SaleLot
+      summary: Get a list of sale lots by user ID
+      operationId: getSaleLotsByUserId
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: User ID
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SaleLotDto'
+        '404':
+          description: User not found
+  /sell/lot/stock/{stockId}:
+    get:
+      tags:
+        - SaleLot
+      summary: Get a list of sale lots by stock ID
+      operationId: getSaleLotsByStockId
+      parameters:
+        - in: path
+          name: stockId
+          required: true
+          schema:
+            type: string
+          description: Stock ID
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SaleLotDto'
+        '404':
+          description: Stock not found
+
+components:
+  schemas:
+    SaleLotDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        stockId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        numberOfStocks:
+          type: integer
+        priceForOneStock:
+          type: integer
+        totalPrice:
+          type: integer
+        creationDateTime:
+          type: string
+          format: date-time
+        saleForActualPrice:
+          type: boolean
