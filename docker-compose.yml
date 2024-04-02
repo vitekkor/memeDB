@@ -43,3 +43,14 @@ services:
 
     ports:
       - 5601:5601
+
+
+  minio:
+    image: minio/minio:latest
+    command: server --console-address ":9001" /data/
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: boss
+      MINIO_ROOT_PASSWORD: bigboss228
