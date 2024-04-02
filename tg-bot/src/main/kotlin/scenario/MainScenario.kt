@@ -19,5 +19,12 @@ class MainScenario(commands: List<BaseCommand>) : Scenario {
         }
 
         commands.forEach { append(it) }
+
+        fallback {
+            reactions.sayRandom(
+                "Простите, такой команды нет...",
+                "Возможно эта команда появится позже"
+            )
+        }
     }
 }

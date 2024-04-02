@@ -1,6 +1,8 @@
 package com.vitekkor.memeDB.scenario.command
 
+import com.justai.jaicf.activator.regex.RegexActivationRule
 import com.justai.jaicf.api.BotRequest
+import com.justai.jaicf.builder.ActivationRulesBuilder
 import com.justai.jaicf.builder.StateBuilder
 import com.justai.jaicf.builder.createModel
 import com.justai.jaicf.model.scenario.Scenario

@@ -50,7 +50,7 @@ class MemeDBConfiguration {
         }
     }
 
-    @Bean
+    @Bean(name = ["ktorClient"])
     fun ktorClient(): HttpClient {
         return HttpClient(CIO) {
             expectSuccess = true
