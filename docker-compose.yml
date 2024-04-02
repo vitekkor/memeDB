@@ -54,3 +54,8 @@ services:
     environment:
       MINIO_ROOT_USER: boss
       MINIO_ROOT_PASSWORD: bigboss228
+
+
+  telegram-bot:
+    build:
+      context: tg-bot
