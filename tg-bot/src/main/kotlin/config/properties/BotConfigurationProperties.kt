@@ -5,4 +5,4 @@ import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
 @ConfigurationProperties(prefix = "bot")
-data class ConfigurationProperties(val telegramToken: String)
+data class BotConfigurationProperties(val telegramToken: String)

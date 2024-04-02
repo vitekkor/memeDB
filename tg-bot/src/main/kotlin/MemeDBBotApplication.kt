@@ -1,12 +1,12 @@
 package com.vitekkor.memeDB
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 
 @EnableConfigurationProperties
-@ConfigurationProperties
+@ConfigurationPropertiesScan("com.vitekkor.memeDB.config")
 @SpringBootApplication
 class MemeDBBotApplication
 

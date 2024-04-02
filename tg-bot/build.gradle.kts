@@ -1,10 +1,21 @@
 plugins {
-    kotlin("jvm")
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.spring") version "1.9.22"
+    kotlin("plugin.serialization") version "1.9.22"
+
     id("org.springframework.boot") version "2.7.6"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("plugin.spring") version "1.8.20"
-    kotlin("plugin.serialization") version "1.8.20"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
+}
+
+repositories {
+    mavenCentral()
+    maven(uri("https://jitpack.io"))
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 val jaicfVersion = "1.3.6"
@@ -14,6 +25,7 @@ dependencies {
     implementation("com.just-ai.jaicf:core:$jaicfVersion")
     implementation("com.just-ai.jaicf:jaicp:$jaicfVersion")
     implementation("com.just-ai.jaicf:telegram:$jaicfVersion")
+    implementation("com.just-ai.jaicf:mongo:$jaicfVersion")
 
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -32,9 +44,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
