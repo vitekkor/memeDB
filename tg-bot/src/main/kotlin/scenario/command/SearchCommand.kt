@@ -21,6 +21,7 @@ class SearchCommand(private val searchCommandService: SearchCommandService) : Ba
             val result = searchCommandService.findMemes(searchText)
 
             reactions.say(result)
+            reactions.go("../../../")
         }
     }
 }

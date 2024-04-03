@@ -6,13 +6,12 @@ spring:
     name: memedbbot
   data:
     mongodb:
-      uri: mongodb://localhost:27017/memeDBBot
+      uri: mongodb://localhost:27017/${bot.mongoCollection}
       auto-index-creation: true
 
 bot:
   telegramToken:
-  auto-delete-messages:
-    fixed-rate: 60_000
+  mongoCollection: memeDBBot
 
 logging:
   file:
