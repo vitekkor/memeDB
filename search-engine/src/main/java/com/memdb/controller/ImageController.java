@@ -1,6 +1,7 @@
 package com.memdb.controller;
 
 import com.memdb.model.Mem;
+import com.memdb.model.MemDto;
 import com.memdb.service.ElasticsearchService;
 import com.memdb.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -34,20 +35,20 @@ public class ImageController {
     ) {
         log.info("Receive new image: {}", file.getContentType());
         var imageId = imageService.saveImage(file);
-        elasticsearchService.saveMem(imageId, file.getContentType(), description);
+        elasticsearchService.saveMem(imageId, "image", description);
         log.info("Image with description {} was saved. Id: {}", description, imageId);
         return ResponseEntity.ok().body(imageId);
     }
 
     @GetMapping(value = "/search", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<String>> search(
+    public ResponseEntity<List<MemDto>> search(
             @RequestParam String description,
             @RequestParam(defaultValue = "5", required = false) Integer count
     ) {
         log.info("Searching top {} images by description: {}", count, description);
         List<Mem> memes = elasticsearchService.search(description, count);
         log.info("Found {} memes.", memes.size());
-        return ResponseEntity.ok(memes.stream().map(Mem::getUuid).toList());
+        return ResponseEntity.ok(memes.stream().map(MemDto::new).toList());
     }
 
     @DeleteMapping

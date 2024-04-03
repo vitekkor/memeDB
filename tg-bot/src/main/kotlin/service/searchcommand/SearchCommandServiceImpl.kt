@@ -1,6 +1,7 @@
 package com.vitekkor.memeDB.service.searchcommand
 
 import com.vitekkor.memeDB.config.properties.SearchEngineConfigurationProperties
+import com.vitekkor.memeDB.model.MemDto
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -26,17 +27,17 @@ class SearchCommandServiceImpl(
     private val url = searchEngineConfigurationProperties.url.removeSuffix("/")
     private val tmpDir = Files.createTempDirectory("media")
 
-    override fun findMemes(searchText: String): List<File> = runBlocking(Dispatchers.IO) {
-        val memeIds: List<String> = ktorClient.request<List<String>>("$url/image/search") {
+    override fun findMemes(searchText: String): List<Pair<File, String>> = runBlocking(Dispatchers.IO) {
+        val memeIds: List<MemDto> = ktorClient.request<List<MemDto>>("$url/image/search") {
             method = HttpMethod.Get
             parameter(DESCRIPTION_PARAMETER, searchText)
         }
 
         log.info { memeIds }
-        return@runBlocking memeIds.map {
-            val file = tmpDir.resolve(it).toFile()
-            file.writeBytes(ktorClient.get<ByteArray>("$url/image/$it"))
-            file
+        return@runBlocking memeIds.map { (id, type) ->
+            val file = tmpDir.resolve(id).toFile()
+            file.writeBytes(ktorClient.get<ByteArray>("$url/image/$id"))
+            file to type
         }
     }
 

@@ -22,3 +22,7 @@ fun BotRequest.attachments(): Attachment? {
 fun TelegramReactions.sendPhoto(file: File) {
     api.sendPhoto(chatId, file)
 }
+
+fun TelegramReactions.sendVideo(file: File) {
+    api.sendVideo(chatId, file)
+}
