@@ -12,7 +12,7 @@ fun BotRequest.attachments(): Attachment? {
             ?.first()?.fileId
             ?.let { listOf(it) }
 
-        return TelegramAttachment(photos)
+        return TelegramAttachment(photos?.first())
     }
     return null
 }

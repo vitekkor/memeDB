@@ -5,10 +5,10 @@ sealed interface Attachment {
 }
 
 data class TelegramAttachment(
-    val photos: List<String>?
+    val photoId: String?
 ) : Attachment {
     override fun isEmpty(): Boolean {
-        return photos.isNullOrEmpty() == null
+        return photoId.isNullOrEmpty() == null
     }
 }
 
