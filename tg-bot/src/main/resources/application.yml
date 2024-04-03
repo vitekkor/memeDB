@@ -1,5 +1,5 @@
 server:
-  port: ${port:8080}
+  port: ${port:8090}
 
 spring:
   application:
@@ -12,6 +12,9 @@ spring:
 bot:
   telegramToken:
   mongoCollection: memeDBBot
+
+search-engine:
+  url: http://localhost:8080
 
 logging:
   file:
