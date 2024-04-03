@@ -24,7 +24,10 @@ logging:
 
 minio:
   endpoint: http://localhost:9000
-  accessKey: minioaccesskey
-  secretKey: miniosecretkey
+  accessKey: 123123
+  secretKey: 123123123
   bucketName: mem-images
+
+elasticsearch:
+  url: localhost:9200
 
