@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/image")
@@ -23,21 +25,17 @@ public class ImageController {
     ) {
 
         var imageId = imageService.saveImage(file);
-        System.out.println(file.getContentType());
         elasticsearchService.saveMem(imageId, file.getContentType(), description);
         return ResponseEntity.ok().body(imageId);
     }
 
     @GetMapping
-    public ResponseEntity<byte[]> search(
-            @RequestParam String description
+    public ResponseEntity<List<String>> search(
+            @RequestParam String description,
+            @RequestParam(defaultValue = "5", required = false) Integer count
     ) {
-        Mem mem = elasticsearchService.searchOne(description);
-        System.out.println(mem.getDescription());
-        System.out.println(mem.getType());
-        return ResponseEntity.ok()
-                .contentType(mapType(mem.getType()))
-                .body(imageService.getImage(mem.getUuid()));
+        List<Mem> mem = elasticsearchService.search(description, count);
+        return ResponseEntity.ok(mem.stream().map(Mem::getUuid).toList());
     }
 
     @GetMapping("/{imageId}")

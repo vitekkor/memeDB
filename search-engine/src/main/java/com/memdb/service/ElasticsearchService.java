@@ -24,16 +24,15 @@ public class ElasticsearchService {
         memRepository.save(new Mem(imageId, type, description));
     }
 
-    public List<Mem> search(String description) {
+    public List<Mem> search(String description, Integer count) {
         FuzzyQuery query1 = new FuzzyQuery.Builder().field("description")
                 .value(description)
-                .boost(100f)
-                .fuzziness("10")
                 .build();
         Query query2 = Query.of(q -> q.fuzzy(query1));
         try {
             return elasticsearchClient.search(s -> s.index("mem").query(query2), Mem.class)
                     .hits().hits().stream()
+                    .limit(count)
                     .map(Hit::source)
                     .toList();
         } catch (IOException e) {

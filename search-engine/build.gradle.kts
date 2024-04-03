@@ -22,6 +22,8 @@ dependencies {
 
     //OPENAPI
     implementation("org.springframework.boot:spring-boot-starter-validation:3.2.0")
+    implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch:3.2.4")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 
     //TESTS
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -31,6 +33,10 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 
     runtimeOnly("com.h2database:h2:2.2.220")
+}
+
+tasks.withType<JavaCompile>() {
+    options.compilerArgs.add("-parameters")
 }
 
 openApiGenerate {
