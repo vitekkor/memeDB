@@ -11,6 +11,7 @@ import com.justai.jaicf.reactions.buttons
 import com.justai.jaicf.reactions.toState
 import com.vitekkor.memeDB.model.Media
 import com.vitekkor.memeDB.model.TelegramAttachment
+import com.vitekkor.memeDB.model.isNullOrEmpty
 import com.vitekkor.memeDB.scenario.extension.attachments
 import com.vitekkor.memeDB.service.addmediacommand.AddMediaCommandService
 import org.springframework.stereotype.Component
@@ -44,6 +45,12 @@ class AddMediaCommand(private val addMediaCommandService: AddMediaCommandService
 
         action {
             val attachments = request.attachments()
+
+            if (attachments.isNullOrEmpty()) {
+                reactions.say("Вы не отправили медиа файл")
+                return@action
+            }
+
             reactions.say("Добавление фото")
 
             context.client["fileId"] = (attachments as TelegramAttachment).photoId
@@ -79,6 +86,7 @@ class AddMediaCommand(private val addMediaCommandService: AddMediaCommandService
 
             val mediaData = Media(context.client["fileId"].toString(), context.client["descriptionText"].toString())
             addMediaCommandService.addMedia(mediaData)
+            reactions.say("Ваш мем был добавлен в базу")
             reactions.go("../../../")
         }
     }
