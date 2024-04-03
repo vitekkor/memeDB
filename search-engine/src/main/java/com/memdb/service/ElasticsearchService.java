@@ -3,11 +3,11 @@ package com.memdb.service;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.query_dsl.FuzzyQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.DeleteRequest;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.memdb.model.Mem;
 import com.memdb.repository.MemRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,6 +35,15 @@ public class ElasticsearchService {
                     .limit(count)
                     .map(Hit::source)
                     .toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void delete(String id) {
+        DeleteRequest deleteRequest = DeleteRequest.of(d -> d.index("mem").id(id));
+        try {
+            elasticsearchClient.delete(deleteRequest);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

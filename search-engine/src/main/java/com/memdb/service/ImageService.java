@@ -3,6 +3,7 @@ package com.memdb.service;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,18 @@ public class ImageService {
                     .build());
 
             return IOUtils.toByteArray(imageStream);
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving image from MinIO");
+        }
+    }
+
+    public void deleteImage(String id) {
+        try {
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(id)
+                    .build()
+            );
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving image from MinIO");
         }

@@ -4,9 +4,17 @@ import com.memdb.model.Mem;
 import com.memdb.service.ElasticsearchService;
 import com.memdb.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -14,6 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/image")
+@Slf4j
 public class ImageController {
     private final ImageService imageService;
     private final ElasticsearchService elasticsearchService;
@@ -23,19 +32,32 @@ public class ImageController {
             @RequestParam String description,
             @RequestPart(value = "file") MultipartFile file
     ) {
-
+        log.info("Receive new image: {}", file.getContentType());
         var imageId = imageService.saveImage(file);
         elasticsearchService.saveMem(imageId, file.getContentType(), description);
+        log.info("Image with description {} was saved. Id: {}", description, imageId);
         return ResponseEntity.ok().body(imageId);
     }
 
-    @GetMapping
+    @GetMapping(value = "/search", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<List<String>> search(
             @RequestParam String description,
             @RequestParam(defaultValue = "5", required = false) Integer count
     ) {
-        List<Mem> mem = elasticsearchService.search(description, count);
-        return ResponseEntity.ok(mem.stream().map(Mem::getUuid).toList());
+        log.info("Searching top {} images by description: {}", count, description);
+        List<Mem> memes = elasticsearchService.search(description, count);
+        log.info("Found {} memes.", memes.size());
+        return ResponseEntity.ok(memes.stream().map(Mem::getUuid).toList());
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> delete(
+            @RequestParam String id
+    ) {
+        log.info("Delete image by id: {}", id);
+        elasticsearchService.delete(id);
+        imageService.deleteImage(id);
+        return ResponseEntity.ok("Ok");
     }
 
     @GetMapping("/{imageId}")
@@ -49,14 +71,4 @@ public class ImageController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    private MediaType mapType(String type) {
-        return switch (type) {
-            case "image/jpeg" -> MediaType.IMAGE_JPEG;
-            case "image/gif" -> MediaType.IMAGE_GIF;
-            case "image/png" -> MediaType.IMAGE_PNG;
-            default -> throw new IllegalStateException("Unexpected value: " + type);
-        };
-    }
-
 }
