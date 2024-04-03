@@ -14,7 +14,8 @@ class MainScenario(commands: List<BaseCommand>) : Scenario {
         state("start") {
             activators { regex("/start") }
             action(telegram) {
-                reactions.say("Привет!")
+                reactions.say("Привет! Я memeDB бот - твой проводник в мире мемов. Введи команду /search для поиска")
+                reactions.image("https://imgb.ifunny.co/images/c1215bcaf3141796cffde25cd16ca8bae3cce071ed536a948371ef207b33bbcd_1.webp")
             }
         }
 

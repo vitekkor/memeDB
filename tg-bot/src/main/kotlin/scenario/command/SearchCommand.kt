@@ -18,15 +18,21 @@ class SearchCommand(private val searchCommandService: SearchCommandService) : Ba
     override val description: String = "поиск мемов по описанию"
 
     override fun StateBuilder<BotRequest, Reactions>.commandAction() {
-        activators { regex("/search\\s+(?<searchText>.*)") }
+        activators { regex("/search(\\s+(?<searchText>.*))?") }
 
         action {
-            val searchText = activator.regex?.group("searchText") ?: return@action
+            val searchText = activator.regex?.group("searchText") ?: kotlin.run {
+                reactions.sayRandom(
+                    "Какой мем хочешь найти?",
+                    "Ничего не понятно, но очень интересно. Пожалуйста, введите текст запроса"
+                )
+                return@action
+            }
 
             val result = searchCommandService.findMemes(searchText)
 
             when (result.size) {
-                0 -> reactions.say("К сожалению ничего не нашлось \uD83D\uDE14. Попробуйте другой запрос.")
+                0 -> reactions.say("К сожалению ничего не нашлось \uD83D\uDE14 Попробуйте другой запрос")
                 1 -> reactions.telegram?.sendPhoto(result.first())
                 else -> reactions.telegram?.sendMediaGroup(
                     MediaGroup.from(
