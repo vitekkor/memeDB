@@ -23,7 +23,7 @@ class SearchCommand(private val searchCommandService: SearchCommandService) : Ba
         "https://cs9.pikabu.ru/post_img/2016/10/26/6/og_og_1477473794223474155.jpg",
         "https://avatars.dzeninfra.ru/get-zen_doc/1534997/pub_5ccd9b67ffaa2300b352e32a_5ccda7554900f400af337e70/scale_1200",
         "https://cdn1.flamp.ru/64780ce1ec27b308d068e45fb2eb3527_1920.jpg",
-        )
+    )
 
     override fun StateBuilder<BotRequest, Reactions>.commandAction() {
         activators { regex("/search(\\s+(?<searchText>.*))?") }
@@ -74,7 +74,7 @@ class SearchCommand(private val searchCommandService: SearchCommandService) : Ba
                 )
             }
             reactions.say("Найти что-нибудь ещё?")
-            reactions.go("../../../")
+            reactions.goBack()
         }
     }
 }
