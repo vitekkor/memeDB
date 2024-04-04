@@ -60,11 +60,15 @@ services:
     restart: always
     build:
       context: tg-bot
+    volumes:
+      - ./etc/tg-bot:/etc/memDB/telegram
 
   search-engine:
     restart: always
     build:
       context: search-engine
+    volumes:
+      - ./etc/tg-bot:/etc/memDB/search-engine/
 
   mongo:
     image: mongo
