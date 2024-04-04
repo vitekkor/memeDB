@@ -1,6 +1,7 @@
 package com.memdb.service.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.memdb.service.kafka.dto.CaptionQueueDto;
 import org.apache.kafka.common.serialization.Deserializer;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ public class CustomDeserializer implements Deserializer<Object> {
     public Object deserialize(String topic, byte[] data) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(data, Object.class);
+            return objectMapper.readValue(data, CaptionQueueDto.class);
         } catch (IOException e) {
             throw new UncheckedIOException("Deserialization Error", e);
         }

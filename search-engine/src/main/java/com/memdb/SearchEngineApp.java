@@ -2,6 +2,7 @@ package com.memdb;
 
 import com.memdb.service.kafka.CustomDeserializer;
 import com.memdb.service.kafka.CustomSerializer;
+import com.memdb.service.kafka.dto.CaptionQueueDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -44,7 +45,7 @@ public class SearchEngineApp {
     }
 
     @Bean
-    public ConsumerFactory<String, Object> consumerFactory() {
+    public ConsumerFactory<String, CaptionQueueDto> consumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -55,8 +56,8 @@ public class SearchEngineApp {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, CaptionQueueDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, CaptionQueueDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

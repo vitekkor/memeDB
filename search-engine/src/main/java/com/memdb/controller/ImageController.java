@@ -77,6 +77,7 @@ public class ImageController {
     public ResponseEntity<String> createCaption(
             @PathVariable String imageId
     ) {
+        log.info("Receive new imageId for creating caption: {}", imageId);
         var captionUUID = imageService.createCaption(imageId);
         return ResponseEntity.ok().body(captionUUID);
     }

@@ -15,6 +15,7 @@ import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.ProducerFactory
 import service.kafka.CustomDeserializer
+import service.kafka.dto.CaptionCallbackDto
 
 @EnableConfigurationProperties
 @ConfigurationPropertiesScan("com.vitekkor.memeDB.config")
@@ -30,7 +31,7 @@ fun main(args: Array<String>) {
 private lateinit var bootstrapServers: String
 
 @Bean
-fun consumerFactory(): ConsumerFactory<String, Any> {
+fun consumerFactory(): ConsumerFactory<String, CaptionCallbackDto> {
     val configProps: MutableMap<String, Any> = HashMap()
     configProps[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
     configProps[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
@@ -41,8 +42,8 @@ fun consumerFactory(): ConsumerFactory<String, Any> {
 }
 
 @Bean
-fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> {
-    val factory = ConcurrentKafkaListenerContainerFactory<String, Any>()
+fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, CaptionCallbackDto> {
+    val factory = ConcurrentKafkaListenerContainerFactory<String, CaptionCallbackDto>()
     factory.consumerFactory = consumerFactory()
     return factory
 }
