@@ -1,5 +1,7 @@
 package com.vitekkor.memeDB.scenario.command
 
+import com.github.kotlintelegrambot.entities.InlineKeyboardMarkup
+import com.github.kotlintelegrambot.entities.keyboard.InlineKeyboardButton
 import com.justai.jaicf.activator.regex.regex
 import com.justai.jaicf.api.BotRequest
 import com.justai.jaicf.builder.StateBuilder
@@ -7,11 +9,12 @@ import com.justai.jaicf.builder.createModel
 import com.justai.jaicf.channel.telegram.TelegramBotRequest
 import com.justai.jaicf.channel.telegram.TelegramEvent
 import com.justai.jaicf.channel.telegram.TelegramReactions
+import com.justai.jaicf.channel.telegram.callback
 import com.justai.jaicf.channel.telegram.telegram
+import com.justai.jaicf.generic.and
+import com.justai.jaicf.model.activation.onlyFrom
 import com.justai.jaicf.model.scenario.ScenarioModel
 import com.justai.jaicf.reactions.Reactions
-import com.justai.jaicf.reactions.buttons
-import com.justai.jaicf.reactions.toState
 import com.vitekkor.memeDB.misc.MediaRepository
 import com.vitekkor.memeDB.model.FileData
 import com.vitekkor.memeDB.model.Media
@@ -19,7 +22,6 @@ import com.vitekkor.memeDB.model.TelegramAttachment
 import com.vitekkor.memeDB.model.isNullOrEmpty
 import com.vitekkor.memeDB.scenario.extension.attachments
 import com.vitekkor.memeDB.service.addmediacommand.AddMediaCommandService
-import io.ktor.client.features.ServerResponseException
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
 
@@ -74,25 +76,44 @@ class AddMediaCommand(
                 reactions.goBack()
                 return@action
             }
-            reactions.say("Добавить описание")
-            reactions.buttons("Вручную" toState "manuallyDescription", "Автоматически" toState "autoDescription")
+            val replyMarkup = InlineKeyboardMarkup.createSingleRowKeyboard(
+                InlineKeyboardButton.CallbackData("Вручную", MANUAL),
+                InlineKeyboardButton.CallbackData("Автоматически", AUTOMATIC)
+            )
+            reactions.say(text = "Добавить описание", replyMarkup = replyMarkup)
         }
     }
 
     private fun StateBuilder<BotRequest, Reactions>.addManuallyDescription() {
-        activators { regex("/manuallyDescription") }
+        activators { regex(MANUAL).onlyFrom(telegram.callback) }
 
-        action {
+        action(telegram.callback and regex) {
+            val messageId = request.message.messageId
+            reactions.run {
+                api.editMessageReplyMarkup(
+                    chatId,
+                    messageId,
+                    replyMarkup = InlineKeyboardMarkup.create()
+                )
+            }
             reactions.say("Введите описание")
         }
     }
 
     private fun StateBuilder<BotRequest, Reactions>.addAutoDescription() {
-        activators { regex("/autoDescription") }
+        activators { regex(AUTOMATIC).onlyFrom(telegram.callback) }
 
-        action {
+        action(telegram.callback and regex) {
+            val messageId = request.message.messageId
+            reactions.run {
+                api.editMessageReplyMarkup(
+                    chatId,
+                    messageId,
+                    replyMarkup = InlineKeyboardMarkup.create()
+                )
+            }
             reactions.say("Данная функциональность будет скоро доступна.")
-            reactions.go("../../../")
+            reactions.changeState("/")
             return@action
 
             reactions.say("Идет обработка файла...")
@@ -106,7 +127,6 @@ class AddMediaCommand(
             }
 
             val chatId = reactions.telegram!!.chatId.id
-            val messageId = reactions.telegram!!.request.message.messageId
             val fileData = FileData(chatId = chatId, messageId = messageId, fileId = fileId)
 
             addMediaCommandService.addFileBytes(fileData, fileBytes)
@@ -144,7 +164,7 @@ class AddMediaCommand(
             }
             try {
                 addMediaCommandService.addMedia(mediaData, fileBytes)
-            } catch (e: ServerResponseException) {
+            } catch (e: Exception) {
                 log.error("Couldn't save image", e)
                 reactions.say("Что-то пошло не так :(")
                 return false
@@ -155,5 +175,10 @@ class AddMediaCommand(
             reactions.say("Ваш мем скоро будет добавлен в базу")
         }
         return true
+    }
+
+    companion object {
+        private const val MANUAL = "manual"
+        private const val AUTOMATIC = "automatic"
     }
 }
