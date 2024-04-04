@@ -13,10 +13,19 @@ spring:
     console:
       enabled: true
       path: /h2-console
-
   jpa:
     hibernate:
       ddl-auto: create
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.memdb.service.kafka.CustomSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.memdb.service.kafka.CustomDeserializer
+    listener:
+      missing-topics-fatal: false
 
 logging:
   level:
@@ -30,4 +39,3 @@ minio:
 
 elasticsearch:
   url: localhost:9200
-

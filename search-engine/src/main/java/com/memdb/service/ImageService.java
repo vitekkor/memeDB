@@ -1,5 +1,7 @@
 package com.memdb.service;
 
+import com.memdb.service.kafka.KafkaProducerService;
+import com.memdb.service.kafka.dto.CaptionQueueDto;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageService {
     private final MinioClient minioClient;
+    private final KafkaProducerService kafkaProducerService;
 
     @Value("${minio.bucketName}")
     private String bucketName;
@@ -59,5 +62,13 @@ public class ImageService {
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving image from MinIO");
         }
+    }
+
+    // вернуть UUID d response
+    public void createCaption(String imageId) {
+        var captionDto = new CaptionQueueDto();
+        captionDto.setId(UUID.randomUUID().toString());
+        captionDto.setMediaId(imageId);
+        kafkaProducerService.sendMessageToCaptionQueue(captionDto);
     }
 }

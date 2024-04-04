@@ -8,6 +8,13 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/${bot.mongoCollection}
       auto-index-creation: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: service.kafka.CustomDeserializer
+    listener:
+      missing-topics-fatal: false
 
 bot:
   telegramToken:
