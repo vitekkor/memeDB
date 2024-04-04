@@ -42,6 +42,14 @@ class SearchCommandServiceImpl(
         }
     }
 
+    override fun findMemesIds(searchText: String): List<MemDto> = runBlocking {
+        return@runBlocking ktorClient.request<List<MemDto>>("$url/image/search") {
+            method = HttpMethod.Get
+            parameter(DESCRIPTION_PARAMETER, searchText)
+            parameter("count", 25)
+        }
+    }
+
     companion object {
         private const val DESCRIPTION_PARAMETER = "description"
     }

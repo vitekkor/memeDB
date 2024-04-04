@@ -3,10 +3,10 @@ package com.vitekkor.memeDB.config
 import com.justai.jaicf.BotEngine
 import com.justai.jaicf.activator.regex.RegexActivator
 import com.justai.jaicf.api.BotApi
-import com.justai.jaicf.channel.telegram.TelegramChannel
 import com.justai.jaicf.context.manager.mongo.MongoBotContextManager
 import com.justai.jaicf.logging.Slf4jConversationLogger
 import com.vitekkor.memeDB.config.properties.BotConfigurationProperties
+import com.vitekkor.memeDB.misc.CustomTelegramChannel
 import com.vitekkor.memeDB.scenario.MainScenario
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -85,7 +85,7 @@ class MemeDBConfiguration(
 
     @Bean
     fun teleramChannel(botApi: BotApi, ktorClient: HttpClient) =
-        TelegramChannel(
+        CustomTelegramChannel(
             botApi = botApi,
             telegramBotToken = botConfigurationProperties.telegramToken,
         ).apply {

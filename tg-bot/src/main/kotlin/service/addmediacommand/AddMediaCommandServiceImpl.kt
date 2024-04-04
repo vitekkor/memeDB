@@ -1,7 +1,9 @@
 package com.vitekkor.memeDB.service.addmediacommand
 
 import com.vitekkor.memeDB.config.properties.SearchEngineConfigurationProperties
+import com.vitekkor.memeDB.misc.FileIdRepository
 import com.vitekkor.memeDB.model.FileData
+import com.vitekkor.memeDB.model.FileId
 import com.vitekkor.memeDB.model.Media
 import com.vitekkor.memeDB.repository.FileDataRepository
 import io.ktor.client.HttpClient
@@ -24,6 +26,7 @@ class AddMediaCommandServiceImpl(
     private val ktorClient: HttpClient,
     private val fileDataRepository: FileDataRepository,
     searchEngineConfigurationProperties: SearchEngineConfigurationProperties,
+    private val fileIdRepository: FileIdRepository,
 ) : AddMediaCommandService {
     private val log = logger {}
     private val url = searchEngineConfigurationProperties.url.removeSuffix("/")
@@ -46,8 +49,8 @@ class AddMediaCommandServiceImpl(
             )
         }
         log.info { "Saved id $id" }
-
-        return@runBlocking
+        fileIdRepository.save(FileId(mediaData.fileId, id, "image"))
+        return@runBlocking id
     }
 
     override fun addFileBytes(fileData: FileData, fileBytes: ByteArray) = runBlocking(Dispatchers.IO) {
