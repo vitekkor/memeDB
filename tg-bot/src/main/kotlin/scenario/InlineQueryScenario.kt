@@ -10,6 +10,7 @@ import com.vitekkor.memeDB.misc.CustomTelegramEvent
 import com.vitekkor.memeDB.misc.FileIdRepository
 import com.vitekkor.memeDB.misc.TelegramInlineQueryRequest
 import com.vitekkor.memeDB.service.searchcommand.SearchCommandService
+import mu.KotlinLogging
 import org.springframework.stereotype.Component
 
 @Component
@@ -17,6 +18,7 @@ class InlineQueryScenario(
     private val searchCommandService: SearchCommandService,
     private val fileIdRepository: FileIdRepository,
 ) : Scenario {
+    private val log = KotlinLogging.logger {}
     override val model: ScenarioModel = createModel {
         state(CustomTelegramEvent.INLINE_QUERY_EVENT) {
             activators { event(CustomTelegramEvent.INLINE_QUERY_EVENT) }
@@ -27,11 +29,13 @@ class InlineQueryScenario(
                 }.onFailure {
                     logger.error("Error", it)
                 }.getOrNull()
+                log.info("Found memes {}", result)
                 if (result == null) {
                     reactions.api.answerInlineQuery(telegramInlineQueryRequest.id)
                     return@action
                 }
                 val fileIds = fileIdRepository.findAllById(result.map { it.id })
+                log.info("Found files {}", fileIds)
                 val answer = fileIds.mapNotNull { (fileId, type, id) ->
                     when (type) {
                         "image" -> InlineQueryResult.CachedPhoto(id, fileId)
@@ -39,6 +43,7 @@ class InlineQueryScenario(
                         else -> null
                     }
                 }
+                log.info("Answer {}", answer)
                 reactions.api.answerInlineQuery(telegramInlineQueryRequest.id, answer)
                 reactions.goBack()
             }
