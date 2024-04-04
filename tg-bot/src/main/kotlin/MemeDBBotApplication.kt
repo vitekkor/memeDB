@@ -47,4 +47,3 @@ fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<Str
     factory.consumerFactory = consumerFactory()
     return factory
 }
-

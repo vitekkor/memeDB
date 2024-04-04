@@ -9,7 +9,7 @@ spring:
       uri: mongodb://mongo/${bot.mongoCollection}
       auto-index-creation: true
   kafka:
-    bootstrap-servers: kafka:29092
+    bootstrap-servers: kafka:9092
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: service.kafka.CustomDeserializer
@@ -21,7 +21,7 @@ bot:
   mongoCollection: memeDBBot
 
 search-engine:
-  url: http://localhost:8080
+  url: http://search-engine:8080
 
 logging:
   file:
