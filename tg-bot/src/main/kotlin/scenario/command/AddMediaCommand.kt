@@ -53,6 +53,8 @@ class AddMediaCommand(
     override fun StateBuilder<BotRequest, Reactions>.commandAction() {
         activators {
             event(TelegramEvent.PHOTOS)
+            event(TelegramEvent.ANIMATION)
+            event(TelegramEvent.DOCUMENT)
             regex("/addmedia")
         }
 
@@ -90,6 +92,7 @@ class AddMediaCommand(
 
         action {
             reactions.say("Данная функциональность будет скоро доступна.")
+            reactions.go("../../../")
             return@action
 
             reactions.say("Идет обработка файла...")
