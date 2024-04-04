@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.2.0" apply false
+    id("org.springframework.boot") version "3.2.0"
     id("org.openapi.generator") version "7.1.0"
 }
 
@@ -35,7 +35,7 @@ dependencies {
     runtimeOnly("com.h2database:h2:2.2.220")
 }
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.compilerArgs.add("-parameters")
 }
 
