@@ -28,7 +28,7 @@ public class ElasticsearchService {
     public List<Mem> search(String description, Integer count) {
         MatchQuery matchQuery = new MatchQuery.Builder().field("description")
                 .query(description)
-                .fuzziness("2")
+                .fuzziness("1")
                 .analyzer("russian")
                 .autoGenerateSynonymsPhraseQuery(true)
                 .build();
