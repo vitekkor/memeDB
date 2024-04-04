@@ -10,13 +10,16 @@ public class ElasticsearchClientConfig extends ElasticsearchConfiguration {
 
     @Value("${elasticsearch.url}")
     private String url;
+    @Value("${elasticsearch.user}")
+    private String user;
+    @Value("${elasticsearch.password}")
+    private String password;
 
     @Override
     public ClientConfiguration clientConfiguration() {
-
         return ClientConfiguration.builder()
                 .connectedTo(url)
+                .withBasicAuth(user, password)
                 .build();
     }
-
 }
