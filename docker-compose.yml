@@ -64,7 +64,7 @@ services:
   search-engine:
     restart: always
     build:
-      context: tg-bot
+      context: search-engine
 
   mongo:
     image: mongo
