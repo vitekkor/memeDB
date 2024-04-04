@@ -36,7 +36,7 @@ class InlineQueryScenario(
                 }
                 val fileIds = fileIdRepository.findAllById(result.map { it.id })
                 log.info("Found files {}", fileIds)
-                val answer = fileIds.mapNotNull { (fileId, type, id) ->
+                val answer = fileIds.mapNotNull { (fileId, id, type) ->
                     when (type) {
                         "image" -> InlineQueryResult.CachedPhoto(id, fileId)
                         "video" -> InlineQueryResult.CachedVideo(id, fileId, "")
