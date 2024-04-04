@@ -6,10 +6,10 @@ spring:
     name: memedbbot
   data:
     mongodb:
-      uri: mongodb://localhost:27017/${bot.mongoCollection}
+      uri: mongodb://mongo/${bot.mongoCollection}
       auto-index-creation: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:29092
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: service.kafka.CustomDeserializer

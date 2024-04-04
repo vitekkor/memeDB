@@ -32,10 +32,12 @@ logging:
     root: INFO
 
 minio:
-  endpoint: http://localhost:9000
-  accessKey: 123123
-  secretKey: 123123123
+  endpoint: http://minio:9000
+  accessKey: boss
+  secretKey: bigboss228
   bucketName: mem-images
 
 elasticsearch:
-  url: localhost:9200
+  url: elasticsearch
+  user: search-engine
+  password: rfMbngeBM5v5jj4
