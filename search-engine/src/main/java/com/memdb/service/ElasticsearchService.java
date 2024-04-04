@@ -1,6 +1,7 @@
 package com.memdb.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.DeleteRequest;
@@ -26,18 +27,21 @@ public class ElasticsearchService {
     }
 
     public List<Mem> search(String description, Integer count) {
-        MatchQuery matchQuery = new MatchQuery.Builder().field("description")
+        Query matchQuery1 = Query.of(q -> q.match(new MatchQuery.Builder().field("description")
                 .query(description)
                 .fuzziness("1")
                 .analyzer("russian")
                 .autoGenerateSynonymsPhraseQuery(true)
+                .build()));
+        Query matchQuery2 = Query.of(q -> q.match(new MatchQuery.Builder().field("description")
+                .query(description)
+                .fuzziness("1")
+                .build()));
+        BoolQuery boolQuery = new BoolQuery.Builder().
+                should(List.of(matchQuery1, matchQuery2))
                 .build();
 
-/*        FuzzyQuery fuzzyQuery = new FuzzyQuery.Builder().field("description")
-                .value(description)
-                .fuzziness("2")
-                .build();*/
-        Query matchQuery_ = Query.of(q -> q.match(matchQuery));
+        Query matchQuery_ = Query.of(q -> q.bool(boolQuery));
         try {
             return elasticsearchClient.search(s -> s.index("mem").query(matchQuery_), Mem.class)
                     .hits().hits().stream()
