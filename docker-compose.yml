@@ -68,7 +68,7 @@ services:
     build:
       context: search-engine
     volumes:
-      - ./etc/tg-bot:/etc/memDB/search-engine/
+      - ./etc/search-engine:/etc/memDB/search-engine/
 
   mongo:
     image: mongo
