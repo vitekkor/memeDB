@@ -86,7 +86,7 @@ class AddMediaCommand(private val addMediaCommandService: AddMediaCommandService
 
             val mediaData = Media(context.client["fileId"].toString(), context.client["descriptionText"].toString())
             addMediaCommandService.addMedia(mediaData)
-            reactions.say("Ваш мем был добавлен в базу")
+            reactions.say("Ваш мем скоро будет добавлен в базу")
             reactions.go("../../../")
         }
     }

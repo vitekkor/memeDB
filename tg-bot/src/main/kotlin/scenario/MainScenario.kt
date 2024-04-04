@@ -1,15 +1,20 @@
 package com.vitekkor.memeDB.scenario
 
 import com.justai.jaicf.builder.Scenario
+import com.justai.jaicf.channel.invocationapi.invocationRequest
 import com.justai.jaicf.channel.telegram.telegram
 import com.justai.jaicf.model.scenario.Scenario
 import com.justai.jaicf.model.scenario.ScenarioModel
 import com.justai.jaicf.model.scenario.getValue
+import com.vitekkor.memeDB.model.AutoCaptionDto
 import com.vitekkor.memeDB.scenario.command.BaseCommand
+import com.vitekkor.memeDB.service.autocaption.AutoCaptionService
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Component
 
 @Component
-class MainScenario(commands: List<BaseCommand>) : Scenario {
+class MainScenario(commands: List<BaseCommand>, autoCaptionScenario: AutoCaptionScenario) : Scenario {
     override val model: ScenarioModel by Scenario {
         state("start") {
             activators { regex("/start") }
@@ -20,6 +25,7 @@ class MainScenario(commands: List<BaseCommand>) : Scenario {
         }
 
         commands.forEach { append(it) }
+        append(autoCaptionScenario)
 
         fallback {
             reactions.sayRandom(
