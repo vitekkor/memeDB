@@ -5,7 +5,7 @@ import com.vitekkor.memeDB.model.Media
 
 interface AddMediaCommandService {
 
-    fun addMedia(meduiaData: Media)
+    fun addMedia(mediaData: Media, file: ByteArray)
 
     fun addFileBytes(fileData: FileData, fileBytes: ByteArray)
 }

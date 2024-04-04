@@ -8,7 +8,7 @@ data class TelegramAttachment(
     val photoId: String?
 ) : Attachment {
     override fun isEmpty(): Boolean {
-        return photoId.isNullOrEmpty() == null
+        return photoId.isNullOrEmpty()
     }
 }
 

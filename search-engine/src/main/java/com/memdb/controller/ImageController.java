@@ -35,6 +35,9 @@ public class ImageController {
     ) {
         log.info("Receive new image: {}", file.getContentType());
         var imageId = imageService.saveImage(file);
+        if (imageId == null) {
+            return ResponseEntity.internalServerError().body("Couldn't save image");
+        }
         elasticsearchService.saveMem(imageId, "image", description);
         log.info("Image with description {} was saved. Id: {}", description, imageId);
         return ResponseEntity.ok().body(imageId);
@@ -73,11 +76,16 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/create_caption/{imageId}")
+    @GetMapping("/create_caption")
     public ResponseEntity<String> createCaption(
-            @PathVariable String imageId
+            @RequestPart(value = "file") MultipartFile file
     ) {
-        log.info("Receive new imageId for creating caption: {}", imageId);
+        log.info("Receive new imageId for creating caption");
+        var imageId = imageService.saveImage(file);
+        if (imageId == null) {
+            log.error("Couldn't save image");
+            return ResponseEntity.internalServerError().body("Couldn't save image");
+        }
         var captionUUID = imageService.createCaption(imageId);
         return ResponseEntity.ok().body(captionUUID);
     }

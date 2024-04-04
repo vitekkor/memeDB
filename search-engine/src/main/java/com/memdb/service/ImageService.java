@@ -37,7 +37,8 @@ public class ImageService {
                     .build());
             return response.object();
         } catch (Exception e) {
-            return "Error saving image";
+            log.error("Unexpected error", e);
+            return null;
         }
     }
 

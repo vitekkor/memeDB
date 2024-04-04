@@ -31,6 +31,7 @@ class SearchCommandServiceImpl(
         val memeIds: List<MemDto> = ktorClient.request<List<MemDto>>("$url/image/search") {
             method = HttpMethod.Get
             parameter(DESCRIPTION_PARAMETER, searchText)
+            parameter("count", 10)
         }
 
         log.info { memeIds }
