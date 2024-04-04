@@ -1,5 +1,6 @@
 package com.vitekkor.memeDB.service.addmediacommand
 
+import com.vitekkor.memeDB.misc.MediaRepository
 import com.vitekkor.memeDB.model.Media
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -14,7 +15,8 @@ import org.springframework.stereotype.Service
 @Service
 class AddMediaCommandServiceImpl(
     @Qualifier("ktorClient")
-    private val ktorClient: HttpClient
+    private val ktorClient: HttpClient,
+    private val mediaRepository: MediaRepository
 ) : AddMediaCommandService {
     private val log = logger {}
 
@@ -22,6 +24,8 @@ class AddMediaCommandServiceImpl(
         val response: HttpResponse = withContext(Dispatchers.IO) {
             ktorClient.request("https://ktor.io/")
         }
+
+        mediaRepository.save(meduiaData)
 
 //        val response: HttpResponse = withContext(Dispatchers.IO) {
 //            ktorClient.post("https://ktor.io/") {
