@@ -5,10 +5,12 @@ import com.justai.jaicf.api.BotRequest
 import com.justai.jaicf.builder.StateBuilder
 import com.justai.jaicf.builder.createModel
 import com.justai.jaicf.channel.telegram.TelegramEvent
+import com.justai.jaicf.channel.telegram.telegram
 import com.justai.jaicf.model.scenario.ScenarioModel
 import com.justai.jaicf.reactions.Reactions
 import com.justai.jaicf.reactions.buttons
 import com.justai.jaicf.reactions.toState
+import com.vitekkor.memeDB.model.FileData
 import com.vitekkor.memeDB.model.Media
 import com.vitekkor.memeDB.model.TelegramAttachment
 import com.vitekkor.memeDB.model.isNullOrEmpty
@@ -71,8 +73,24 @@ class AddMediaCommand(private val addMediaCommandService: AddMediaCommandService
         activators { regex("/autoDescription") }
 
         action {
-            reactions.say("Функция будет добавлена позже")
-            reactions.go("../manuallyDescription")
+            reactions.say("Идет обработка файла...")
+
+            val fileId = context.client["fileId"].toString()
+            val fileBytes = reactions.telegram!!.api.downloadFileBytes(fileId)
+
+            if (fileBytes == null) {
+                reactions.say("Файл не найден")
+                return@action
+            }
+
+            val chatId = reactions.telegram!!.chatId.id
+            val messageId = reactions.telegram!!.request.message.messageId
+            val fileData = FileData(chatId = chatId, messageId = messageId, fileId = fileId)
+
+            addMediaCommandService.addFileBytes(fileData, fileBytes)
+            reactions.say("Ваш мем скоро будет добавлен в базу")
+
+            reactions.go("../../../")
         }
     }
 
