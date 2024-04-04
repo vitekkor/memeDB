@@ -42,6 +42,9 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    implementation("org.apache.kafka:kafka-clients:3.6.0")
+    implementation("org.springframework.kafka:spring-kafka:3.1.2")
 }
 
 kotlin {

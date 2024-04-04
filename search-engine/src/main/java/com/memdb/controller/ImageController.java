@@ -72,4 +72,13 @@ public class ImageController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/create_caption/{imageId}")
+    public ResponseEntity<String> createCaption(
+            @PathVariable String imageId
+    ) {
+        log.info("Receive new imageId for creating caption: {}", imageId);
+        var captionUUID = imageService.createCaption(imageId);
+        return ResponseEntity.ok().body(captionUUID);
+    }
 }

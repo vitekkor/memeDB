@@ -1,10 +1,13 @@
 package com.memdb.service;
 
+import com.memdb.service.kafka.KafkaProducerService;
+import com.memdb.service.kafka.dto.CaptionQueueDto;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,8 +18,10 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ImageService {
     private final MinioClient minioClient;
+    private final KafkaProducerService kafkaProducerService;
 
     @Value("${minio.bucketName}")
     private String bucketName;
@@ -59,5 +64,14 @@ public class ImageService {
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving image from MinIO");
         }
+    }
+
+    public String createCaption(String imageId) {
+        var captionUUID = (UUID.randomUUID().toString());
+        var captionDto = new CaptionQueueDto();
+        captionDto.setId(captionUUID);
+        captionDto.setMediaId(imageId);
+        kafkaProducerService.sendMessageToCaptionQueue(captionDto);
+        return captionUUID;
     }
 }

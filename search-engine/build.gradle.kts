@@ -25,6 +25,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch:3.2.4")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 
+    //KAFKA
+    implementation("org.springframework.kafka:spring-kafka:3.1.2")
+    implementation("org.apache.kafka:kafka-clients:3.6.0")
+    
     //TESTS
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:junit-jupiter")
