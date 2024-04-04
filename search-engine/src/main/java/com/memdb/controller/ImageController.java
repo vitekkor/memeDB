@@ -74,10 +74,10 @@ public class ImageController {
     }
 
     @GetMapping("/create_caption/{imageId}")
-    public ResponseEntity<?> createCaption(
+    public ResponseEntity<String> createCaption(
             @PathVariable String imageId
     ) {
-        imageService.createCaption(imageId);
-        return ResponseEntity.ok().build();
+        var captionUUID = imageService.createCaption(imageId);
+        return ResponseEntity.ok().body(captionUUID);
     }
 }

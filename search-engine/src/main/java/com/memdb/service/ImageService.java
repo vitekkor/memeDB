@@ -64,11 +64,12 @@ public class ImageService {
         }
     }
 
-    // вернуть UUID d response
-    public void createCaption(String imageId) {
+    public String createCaption(String imageId) {
+        var captionUUID = (UUID.randomUUID().toString());
         var captionDto = new CaptionQueueDto();
-        captionDto.setId(UUID.randomUUID().toString());
+        captionDto.setId(captionUUID);
         captionDto.setMediaId(imageId);
         kafkaProducerService.sendMessageToCaptionQueue(captionDto);
+        return captionUUID;
     }
 }
