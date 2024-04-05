@@ -61,6 +61,10 @@ class AddMediaCommand(
         }
 
         action(telegram) {
+            if (request.message.viaBot != null) {
+                reactions.goBack()
+                return@action
+            }
             val attachments = request.attachments()
 
             if (attachments.isNullOrEmpty()) {
