@@ -9,13 +9,16 @@ import com.justai.jaicf.generic.and
 import com.justai.jaicf.model.activation.onlyFrom
 import com.justai.jaicf.model.scenario.Scenario
 import com.justai.jaicf.model.scenario.ScenarioModel
-import com.vitekkor.memeDB.misc.MediaRepository
-import org.springframework.data.domain.PageRequest
+import org.bson.Document
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Component
+
 
 @Component
 class ModeratorScenario(
-    private val mediaRepository: MediaRepository,
+    private val mongoTemplate: MongoTemplate,
 ) : Scenario {
     private val whiteList = setOf("361863012", "422760400", "495768224", "458955823", "848702672")
 
@@ -24,14 +27,20 @@ class ModeratorScenario(
             activators { regex("/moderate") }
             action(telegram) {
                 if (request.clientId in whiteList) {
-                    mediaRepository.findAll(PageRequest.of(0, 10)).content.map {
+                    val photos = findDocumentsWithoutIdAnnotation().map {
                         reactions.sendPhoto(
-                            it.fileId,
-                            caption = it.description,
+                            it.getString("fileId"),
+                            caption = it.getString("description"),
                             replyMarkup = InlineKeyboardMarkup.createSingleButton(
-                                InlineKeyboardButton.CallbackData("DELETE", "DELETE ${it.fileId}")
+                                InlineKeyboardButton.CallbackData(
+                                    "DELETE",
+                                    "DELETE ${it.getObjectId("_id")}"
+                                )
                             )
                         )
+                    }.size
+                    if (photos == 0) {
+                        reactions.say("No memes")
                     }
                 } else {
                     reactions.changeState("/")
@@ -41,8 +50,9 @@ class ModeratorScenario(
                 activators { regex("DELETE .*").onlyFrom(telegram.callback) }
                 action(telegram.callback and com.justai.jaicf.activator.regex.regex) {
                     val messageId = request.message.messageId
-                    val fileId = request.input.removePrefix("DELETE ")
-                    mediaRepository.delete(mediaRepository.findMediaByFileId(fileId))
+                    val id = request.input.removePrefix("DELETE ")
+                    deleteById(id)
+
                     reactions.telegram?.run {
                         api.editMessageReplyMarkup(
                             chatId,
@@ -54,5 +64,16 @@ class ModeratorScenario(
                 }
             }
         }
+    }
+
+    fun findDocumentsWithoutIdAnnotation(): List<Document> {
+        val query = Query().limit(10)
+        val documents: List<Document> = mongoTemplate.find(query, Document::class.java, "media")
+        return documents
+    }
+
+    fun deleteById(id: String) {
+        val query = Query(Criteria.where("_id").`is`(id))
+        mongoTemplate.remove(query, Document::class.java, "media")
     }
 }
