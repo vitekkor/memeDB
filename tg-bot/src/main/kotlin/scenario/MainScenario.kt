@@ -13,6 +13,7 @@ class MainScenario(
     commands: List<BaseCommand>,
     autoCaptionScenario: AutoCaptionScenario,
     inlineQueryScenario: InlineQueryScenario,
+    moderatorScenario: ModeratorScenario,
 ) : Scenario {
     override val model: ScenarioModel by Scenario {
         state("start") {
@@ -26,6 +27,7 @@ class MainScenario(
         commands.forEach { append(it) }
         append(autoCaptionScenario)
         append(inlineQueryScenario)
+        append(moderatorScenario)
 
         fallback {
             if (request.telegram?.message?.text.isNullOrEmpty()) {
