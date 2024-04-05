@@ -28,10 +28,14 @@ class MainScenario(
         append(inlineQueryScenario)
 
         fallback {
-            reactions.sayRandom(
-                "Простите, такой команды нет...",
-                "Возможно эта команда появится позже"
-            )
+            if (request.telegram?.message?.text.isNullOrEmpty()) {
+                reactions.sayRandom(
+                    "Простите, такой команды нет...",
+                    "Возможно эта команда появится позже"
+                )
+            } else {
+                reactions.go("/search")
+            }
         }
     }
 }

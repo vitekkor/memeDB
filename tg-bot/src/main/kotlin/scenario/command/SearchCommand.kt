@@ -29,13 +29,15 @@ class SearchCommand(private val searchCommandService: SearchCommandService) : Ba
         activators { regex("/search(\\s+(?<searchText>.*))?") }
 
         action {
-            val searchText = activator.regex?.group("searchText") ?: kotlin.run {
-                reactions.sayRandom(
-                    "Какой мем хочешь найти?",
-                    "Ничего не понятно, но очень интересно. Пожалуйста, введите текст запроса"
-                )
-                return@action
-            }
+            val searchText = activator.regex?.group("searchText")
+                ?: request.telegram?.message?.text
+                ?: kotlin.run {
+                    reactions.sayRandom(
+                        "Какой мем хочешь найти?",
+                        "Ничего не понятно, но очень интересно. Пожалуйста, введите текст запроса"
+                    )
+                    return@action
+                }
 
             val result = kotlin.runCatching { searchCommandService.findMemes(searchText) }.onFailure {
                 logger.error("Error", it)
